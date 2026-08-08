@@ -1,4 +1,6 @@
+# Logistic_Regression_COVID19_Dataset_Prediction_from_scratch
 A project done with my friend: github.com/AnoshaSameti
+
 # COVID-19 Mortality Prediction: Logistic Regression from Scratch 🦠
 
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)
@@ -13,47 +15,88 @@ This repository contains a comprehensive implementation of **Logistic Regression
 This project was developed as part of the *Fundamentals of Machine Learning & Neural Networks* course. The objective is to predict the probability of survival for COVID-19 patients using clinical features like comorbidities, age, and hospitalization status.
 
 ### Key Highlights:
-- **Zero-Dependency Learning**: No high-level ML libraries (like Scikit-Learn) were used for model training.
-- **Mathematical Foundation**: Implementation of Gradient Descent, Sigmoid activation, and Binary Cross-Entropy.
-- **Imbalance Analysis**: A deep dive into how skewed data distributions affect model reliability.
-- **Regularization**: Implementation of **L2 (Ridge) Regularization** to manage the Bias-Variance tradeoff.
+- **From-Scratch Implementation:** Logistic Regression, Sigmoid activation, Binary Cross-Entropy loss, Gradient computation, and Gradient Descent are implemented without using Scikit-Learn's `LogisticRegression`.
+- **Mathematical Foundation:** Complete manual implementation of the learning algorithm.
+- **Imbalance Analysis:** Comparison of model performance on both the original imbalanced dataset and a balanced dataset.
+- **Overfitting Evaluation:** Training and testing costs are compared to determine whether the model suffers from overfitting and whether regularization would be beneficial.
 
 ---
 
 ## 🛠 Technical Implementation
 
 ### 1. Data Preprocessing Pipeline
-The raw clinical data required intensive cleaning to be suitable for an AI model:
-- **Missing Value Handling**: Systematic removal of null values and placeholder characters (e.g., `#`).
-- **Feature Engineering**: Handling specific encoded values (like `9999-99-99`) in the `date_died` column to create a binary target (1 for deceased, 0 for survived).
-- **Normalization**: Manual implementation of Min-Max Scaling and Standardization to ensure stable gradient updates.
+
+The raw clinical data required preprocessing before training:
+
+- **Missing Value Handling:** Removal of null values and placeholder characters (`#`).
+- **Feature Engineering:** Conversion of the `date_died` column into a binary target variable (`1 = deceased`, `0 = survived`).
+- **Categorical Encoding:** Encoding categorical features using `LabelEncoder`.
+- **Feature Scaling:** Manual Min-Max normalization using statistics computed from the training set only.
+
+---
 
 ### 2. Mathematics of the Model
-The model optimizes the following cost function with L2 Regularization:
 
-$$ J(w,b) = -\frac{1}{m} \sum_{i=1}^{m} [y^{(i)} \log(f_{w,b}(x^{(i)})) + (1 - y^{(i)}) \log(1 - f_{w,b}(x^{(i)}))] + \frac{\lambda}{2m} \sum_{j=1}^{n} w_j^2 $$
+The model minimizes the Binary Cross-Entropy loss function:
 
-Where the hypothesis is the Sigmoid function:
-$$ f_{w,b}(x) = \frac{1}{1 + e^{-(wx + b)}} $$
+$$
+J(w,b)=
+-\frac1m
+\sum_{i=1}^{m}
+\left[
+y^{(i)}\log(f_{w,b}(x^{(i)}))
++
+(1-y^{(i)})\log(1-f_{w,b}(x^{(i)}))
+\right]
+$$
 
-### 3. Manual Evaluation Metrics
-To strictly follow the "from-scratch" requirement, all performance metrics were calculated manually using the Confusion Matrix:
-- **Accuracy**: $(TP + TN) / Total$
-- **Precision**: $TP / (TP + FP)$
-- **Recall**: $TP / (TP + FN)$
-- **F1-Score**: $2 \cdot \frac{Precision \cdot Recall}{Precision + Recall}$
+where the hypothesis function is
+
+$$
+f_{w,b}(x)=\frac1{1+e^{-(wx+b)}}
+$$
+
+Gradient Descent is then used to iteratively optimize the model parameters.
+
+---
+
+### 3. Model Evaluation
+
+The trained model is evaluated using:
+
+- Accuracy
+- Precision
+- Recall
+- F1-Score
+
+These metrics are computed using **Scikit-Learn's evaluation functions**, while the Logistic Regression algorithm itself is implemented entirely from scratch.
+
+Training and testing costs are also compared to evaluate the model's ability to generalize and to determine whether regularization may be required.
 
 ---
 
 ## 📊 Comparative Analysis: Imbalanced vs. Balanced Data
 
-The project explores the **Accuracy Paradox**. In medical diagnostics, a model can have 95% accuracy but 0% recall for the minority class (death), which is unacceptable.
+The project investigates the **Accuracy Paradox** commonly encountered in medical datasets. A classifier may achieve high overall accuracy while performing poorly on the minority class (deceased patients).
 
-| Metric | Imbalanced Dataset (Initial) | Balanced Dataset (Optimized) |
-| :--- | :---: | :---: |
-| **Accuracy** | ~92% (Misleading) | ~79% |
-| **Recall (Minority)** | Low | **High** |
-| **Precision** | Moderate | High |
-| **Generalization** | Prone to Overfitting | Robust |
+The model is therefore trained and evaluated on:
 
-> **Conclusion**: Balancing the dataset and applying L2 Regularization significantly improved the model's ability to identify high-risk patients, increasing the F1-Score for the minority class.
+- **Original (Imbalanced) Dataset**
+- **Balanced Dataset**
+
+Performance is compared using:
+
+- Accuracy
+- Precision
+- Recall
+- F1-Score
+- Training Cost
+- Testing Cost
+
+This comparison demonstrates how balancing the dataset influences the model's ability to identify minority-class samples and improves overall generalization.
+
+---
+
+## 📈 Visualizations
+
+The project includes plots of the training cost versus iterations for both datasets, allowing visualization of Gradient Descent convergence and helping assess the optimization process.
